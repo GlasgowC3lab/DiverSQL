@@ -1,0 +1,48 @@
+instanceName: lakehouse-a
+
+namespace: ""
+
+trino:
+  profiler: 
+    enabled: true
+    when: ['before']
+  logger: true
+  pod:
+    image: 2570809n/trino-node-exporter:latest
+  worker:
+    resources:
+      cpu: "4"
+      memory: "16GB"
+    replicasPerNode: 1
+    count: 2
+    nodes:
+      - ""
+      - ""
+  coord:
+    resources:
+      cpu: "4"
+      memory: "16Gi"
+    nodeName: ""  
+
+test:
+  pod:
+    image: macavaney/idabox:py310-v93
+
+metastore:
+  nodeName: ""
+  hive:
+    pod:
+      image: bde2020/hive:latest
+  postgres:
+    pod:
+      image: postgres:13
+    
+pvc:
+  iceberg:
+    name: iceberg-1tb
+    path: /mnt/iceberg
+
+results:
+  raw:
+    name: lakehouse-raw-results
+    path: /mnt/lakehouse-raw-results

@@ -1,0 +1,199 @@
+{% set count = (Values.trino.worker.count | default(0) | int) %}
+{% set nodes = (Values.trino.worker.nodes | default([])) %}
+
+{% for index in range(count) %}
+{% set nodeName = (nodes[index] if index < (nodes | length) else "") %}
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: trino-worker-{{ Values.instanceName }}-{{ index }}
+  namespace: {{ Values.namespace | default("pgr24james") }}
+spec:
+  serviceName: trino-worker-headless-{{ Values.instanceName }}
+  replicas: {{ Values.trino.worker.replicasPerNode }}
+  selector:
+    matchLabels:
+      statefulsetSelector: trino-worker-{{ Values.instanceName }}-{{ index }}
+  template:
+    metadata:
+      labels:
+        type: Worker
+        app: trino-worker-{{ Values.instanceName }}
+        app: profile-pod-{{ Values.instanceName }}
+        statefulsetSelector: trino-worker-{{ Values.instanceName }}-{{ index }}
+    spec:
+{% if nodeName %}
+      nodeName: {{ nodeName | quote }}
+{% endif %}
+      serviceAccountName: containerroot
+      imagePullSecrets:
+        - name: {{ Values.imagePullSecretName | default("containerroot-dockercfg-qrptl") }}
+      priority: 0
+      schedulerName: default-scheduler
+      enableServiceLinks: true
+      terminationGracePeriodSeconds: 30
+      preemptionPolicy: PreemptLowerPriority
+      securityContext:
+        seLinuxOptions:
+          level: 's0:c29,c14'
+        runAsUser: 0
+      containers:
+        - name: query-node-profiler
+          image: 2570809n/node-profiler:latest
+          imagePullPolicy: Always
+          command:
+            - /bin/sh
+            - -c
+            - |
+              sleep 10
+              python /mnt/primary/Main/profile_cluster/profile_server.py
+          env:
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: PROFILE_SCRIPT
+              value: /mnt/primary/Main/profile_cluster/test_profile.py
+          ports:
+            - containerPort: 8123
+              protocol: TCP
+          volumeMounts:
+            - name: lakehouse-raw-results
+              mountPath: {{ Values.results.raw.path }}
+            - name: pgr24jamesvol1claim
+              mountPath: /mnt/primary
+          resources:
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          securityContext:
+            capabilities:
+              drop:
+                - MKNOD
+        - name: metric-scraper
+          image: "python:3.12-slim"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              python -u /mnt/primary/Main/trino_stack/scrape.py
+          ports:
+            - containerPort: 8099
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: pgr24jamesvol1claim
+              mountPath: /mnt/primary
+            - name: lakehouse-raw-results
+              mountPath: {{ Values.results.raw.path }}
+            - name: {{ Values.pvc.iceberg.name }}
+              mountPath: {{ Values.pvc.iceberg.path }}
+
+        - name: node-exporter
+          image: quay.io/prometheus/node-exporter:v1.8.1
+          args:
+            - --path.procfs=/proc
+            - --path.sysfs=/sys
+            - --path.rootfs=/host
+            - --collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)
+          ports:
+            - containerPort: 9100
+          securityContext:
+            capabilities:
+              drop: [MKNOD]
+          imagePullPolicy: IfNotPresent
+
+        - name: trino-worker
+          image: {{ Values.trino.pod.image }}
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "node.internal-address=${POD_IP}" >> /etc/trino/node.properties
+              exec /lib/trino/bin/run-trino &
+              /mnt/primary/Mini-project/Apache/System/Probe/trino_probe.sh "{{ Values.instanceName }}" "$POD_NAME"
+          ports:
+            - { containerPort: 7071, protocol: TCP }
+            - { containerPort: 8080, protocol: TCP }
+            - { containerPort: 9189, protocol: TCP }
+            - { containerPort: 9090, protocol: TCP }
+            - { containerPort: 9102, protocol: TCP }
+            - { containerPort: 8099, protocol: TCP }
+          securityContext:
+            capabilities:
+              drop: [MKNOD]
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: {{ Values.trino.worker.resources.cpu }}
+              memory: {{ Values.trino.worker.resources.memory }}
+            limits:
+              cpu: {{ Values.trino.worker.resources.cpu }}
+              memory: {{ Values.trino.worker.resources.memory }}
+          volumeMounts:
+            - name: pgr24jamesvol1claim
+              mountPath: /mnt/primary
+            - name: lakehouse-raw-results
+              mountPath: {{ Values.results.raw.path }}
+            - name: {{ Values.pvc.iceberg.name }}
+              mountPath: {{ Values.pvc.iceberg.path }}
+            - name: trino-iceberg-config-{{ Values.instanceName }}
+              mountPath: /etc/trino/catalog/iceberg.properties
+              subPath: iceberg.properties
+            - name: trino-worker-config-{{ Values.instanceName }}
+              mountPath: /etc/trino/config.properties
+              subPath: config.properties
+            - name: trino-jvm-config
+              mountPath: /etc/trino/jvm.config
+              subPath: jvm.config
+            - name: trino-jmx-config
+              mountPath: /etc/jmx-exporter-config.yml
+              subPath: jmx-exporter-config.yml
+          livenessProbe:
+            httpGet: { path: /v1/info, port: 8080 }
+            initialDelaySeconds: 120
+            periodSeconds: 15
+            failureThreshold: 2
+
+      volumes:
+        - name: pgr24jamesvol1claim
+          persistentVolumeClaim:
+            claimName: pgr24jamesvol1claim
+        - name: lakehouse-raw-results
+          persistentVolumeClaim:
+            claimName: {{ Values.results.raw.name }}
+        - name: {{ Values.pvc.iceberg.name }}
+          persistentVolumeClaim:
+            claimName: {{ Values.pvc.iceberg.name }}
+        - name: trino-iceberg-config-{{ Values.instanceName }}
+          configMap:
+            name: trino-iceberg-config-{{ Values.instanceName }}
+        - name: trino-worker-config-{{ Values.instanceName }}
+          configMap:
+            name: trino-worker-config-{{ Values.instanceName }}
+        - name: trino-jvm-config
+          configMap:
+            name: trino-jvm-config
+        - name: trino-jmx-config
+          configMap:
+            name: trino-jmx-config
+
+---
+{% endfor %}

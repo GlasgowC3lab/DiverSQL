@@ -1,0 +1,68 @@
+rendered_name,logical_operator,plan_node_class,category,is_trivial,read_reachable,iceberg_reachable,notes
+TableScan,Scan,TableScanNode,source,1,1,1,Leaf table read
+ScanFilter,Scan,TableScanNode,source,1,1,1,Fused scan+filter via predicate pushdown
+ScanProject,Scan,TableScanNode,source,1,1,1,Fused scan+project
+ScanFilterProject,Scan,TableScanNode,source,1,1,1,Fused scan+filter+project
+Values,Values,ValuesNode,source,1,1,1,Inline VALUES / constant rows
+RemoteSource,RemoteSource,RemoteSourceNode,exchange,1,1,1,Cross-fragment input (distribution plumbing)
+IndexSource,IndexSource,IndexSourceNode,source,0,1,0,Index-based source; not supported by the Iceberg connector
+TableFunction,TableFunction,TableFunctionNode,source,0,1,1,Polymorphic table function; connector/system-dependent
+TableFunctionProcessor,TableFunction,TableFunctionProcessorNode,source,0,1,1,Table-function execution node
+Filter,Filter,FilterNode,filter,1,1,1,Residual WHERE / HAVING predicate
+Project,Project,ProjectNode,project,1,1,1,Expression projection
+FilterProject,Filter,FilterNode,filter,1,1,1,Fused filter+project
+InnerJoin,Join,JoinNode,join,0,1,1,INNER JOIN
+LeftJoin,Join,JoinNode,join,0,1,1,LEFT OUTER JOIN
+RightJoin,Join,JoinNode,join,0,1,1,RIGHT OUTER JOIN
+FullOuterJoin,Join,JoinNode,join,0,1,1,FULL OUTER JOIN
+CrossJoin,Join,JoinNode,join,0,1,1,CROSS JOIN or unqualified comma join
+SemiJoin,SemiJoin,SemiJoinNode,join,0,1,1,Uncorrelated IN or EXISTS
+SpatialJoin,SpatialJoin,SpatialJoinNode,join,0,1,1,Requires a geospatial predicate (ST_* functions)
+IndexJoin,IndexJoin,IndexJoinNode,join,0,1,0,Index nested-loop join; not supported by the Iceberg connector
+CorrelatedJoin,CorrelatedJoin,CorrelatedJoinNode,subquery,0,1,1,Correlated subquery or LATERAL before decorrelation
+Apply,Apply,ApplyNode,subquery,0,1,1,Generic correlated apply prior to decorrelation
+Aggregate,Aggregate,AggregationNode,aggregation,0,1,1,GROUP BY / aggregate functions / DISTINCT
+GroupId,GroupId,GroupIdNode,aggregation,0,1,1,GROUPING SETS / CUBE / ROLLUP fan-out
+MarkDistinct,MarkDistinct,MarkDistinctNode,aggregation,0,1,1,Multiple distinct aggregates (stats-chosen strategy)
+DistinctLimit,DistinctLimit,DistinctLimitNode,aggregation,1,1,1,SELECT DISTINCT with LIMIT
+DistinctLimitPartial,DistinctLimit,DistinctLimitNode,aggregation,1,1,1,Partial variant of DistinctLimit
+Window,Window,WindowNode,window,0,1,1,OVER() window functions
+RowNumber,RowNumber,RowNumberNode,window,0,1,1,ROW_NUMBER without a rank filter (unbounded)
+TopNRanking,TopNRanking,TopNRankingNode,window,1,1,1,Ranking function with rank<=k filter (top-n-per-group)
+PatternRecognition,PatternRecognition,PatternRecognitionNode,window,0,1,1,MATCH_RECOGNIZE
+Sort,Sort,SortNode,sort,1,1,1,ORDER BY without LIMIT
+PartialSort,Sort,SortNode,sort,1,1,1,Partial variant of Sort
+TopN,TopN,TopNNode,sort,1,1,1,ORDER BY + LIMIT merged
+TopNPartial,TopN,TopNNode,sort,1,1,1,Partial variant of TopN
+Limit,Limit,LimitNode,limit,1,1,1,LIMIT without ORDER BY
+LimitPartial,Limit,LimitNode,limit,1,1,1,Partial variant of Limit
+Offset,Offset,OffsetNode,limit,0,1,1,OFFSET clause
+Union,Union,UnionNode,set,0,1,1,UNION or UNION ALL
+Intersect,Intersect,IntersectNode,set,0,1,1,INTERSECT
+Except,Except,ExceptNode,set,0,1,1,EXCEPT
+EnforceSingleRow,EnforceSingleRow,EnforceSingleRowNode,subquery,0,1,1,Scalar subquery cardinality guard
+AssignUniqueId,AssignUniqueId,AssignUniqueIdNode,special,1,1,1,Correlation/decorrelation bookkeeping
+Unnest,Unnest,UnnestNode,unnest,0,1,1,UNNEST of array/map (optional join type prefix)
+Sample,Sample,SampleNode,sample,0,1,1,TABLESAMPLE BERNOULLI or SYSTEM
+DynamicFilterSource,DynamicFilterSource,DynamicFilterSourceNode,special,0,1,1,Dynamic filtering artifact; candidate for trivial set
+Output,Output,OutputNode,plumbing,1,1,1,Final result adapter (always plan root)
+Exchange,Exchange,ExchangeNode,exchange,1,1,1,Generic data exchange
+LocalExchange,Exchange,ExchangeNode,exchange,1,1,1,Within-worker repartition
+RemoteExchange,Exchange,ExchangeNode,exchange,1,1,1,Cross-worker repartition
+SystemExchange,Exchange,ExchangeNode,exchange,1,1,1,Scope-dependent exchange rendering
+LocalMerge,Merge,ExchangeNode,exchange,1,1,1,Order-preserving local gather
+RemoteMerge,Merge,ExchangeNode,exchange,1,1,1,Order-preserving remote gather
+SystemMerge,Merge,ExchangeNode,exchange,1,1,1,Scope-dependent merge rendering
+AdaptivePlan,AdaptivePlan,AdaptivePlanNode,special,1,1,1,Fault-tolerant adaptive planning wrapper
+ExplainAnalyze,ExplainAnalyze,ExplainAnalyzeNode,special,0,0,0,Only present under EXPLAIN ANALYZE
+GroupReference,GroupReference,GroupReference,special,1,0,0,Optimizer-internal placeholder; never in a final plan
+TableWriter,TableWriter,TableWriterNode,dml,0,0,0,INSERT / CTAS write
+TableCommit,TableFinish,TableFinishNode,dml,0,0,0,Commit of a write operation
+StatisticsWriter,StatisticsWriter,StatisticsWriterNode,dml,0,0,0,ANALYZE statistics write
+RefreshMaterializedView,RefreshMaterializedView,RefreshMaterializedViewNode,dml,0,0,0,REFRESH MATERIALIZED VIEW
+MergeWriter,MergeWriter,MergeWriterNode,dml,0,0,0,MERGE write
+MergeProcessor,MergeProcessor,MergeProcessorNode,dml,0,0,0,MERGE row processing
+TableDelete,TableDelete,TableDeleteNode,dml,0,0,0,DELETE
+TableUpdate,TableUpdate,TableUpdateNode,dml,0,0,0,UPDATE
+TableExecute,TableExecute,TableExecuteNode,dml,0,0,0,ALTER TABLE EXECUTE
+SimpleTableExecute,SimpleTableExecute,SimpleTableExecuteNode,dml,0,0,0,Coordinator-only table execute

@@ -1,0 +1,190 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hive-metastore-postgres-{{ Values.instanceName }}
+  namespace: pgr24james
+  labels:
+    type: Metastore
+    app: hive-pod-{{ Values.instanceName }}  # matches the existing service selector
+spec:
+  {% if Values.metastore.nodeName %}
+  nodeName: "{{ Values.metastore.nodeName }}"
+  {% endif %}
+  containers:
+    - name: hive-metastore
+      image: {{ Values.metastore.hive.pod.image }}
+      env:
+        - name: METASTORE_LISTEN_HOST
+          value: "0.0.0.0"
+        - name: METASTORE_PORT
+          value: "9083"
+      ports:
+        - containerPort: 9083
+      command: ["/bin/bash", "-c"]
+      args:
+          - |
+            schematool -initSchema -dbType postgres && \
+            hive --service metastore
+            # chmod 777 /mnt/iceberg/tmp/hive
+      volumeMounts:
+        - name: pgr24jamesvol1claim
+          mountPath: /mnt/primary/
+        - name: lakehouse-raw-results
+          mountPath: {{ Values.results.raw.path }}
+        - name: hive-site-config-{{ Values.instanceName }}
+          mountPath: /opt/hive/conf
+        - name: {{ Values.pvc.iceberg.name }}
+          mountPath: {{ Values.pvc.iceberg.path }}
+      securityContext:
+        capabilities:
+          drop:
+            - MKNOD
+      imagePullPolicy: IfNotPresent
+
+    - name: postgres
+      image: {{ Values.metastore.postgres.pod.image }}
+      env:
+        - name: POSTGRES_DB
+          value: metastore
+        - name: POSTGRES_USER
+          value: hive
+        - name: POSTGRES_PASSWORD
+          value: hivepass
+      volumeMounts:
+        - name: {{ Values.pvc.iceberg.name }}
+          mountPath: /mnt/iceberg
+      securityContext:
+        capabilities:
+          drop:
+            - MKNOD
+  serviceAccountName: containerroot
+  volumes:
+    - name: pgr24jamesvol1claim
+      persistentVolumeClaim:
+        claimName: pgr24jamesvol1claim
+    - name: lakehouse-raw-results
+      persistentVolumeClaim:
+        claimName: {{ Values.results.raw.name }}
+    - name: {{ Values.pvc.iceberg.name }}
+      persistentVolumeClaim:
+        claimName: {{ Values.pvc.iceberg.name }}
+    - name: hive-site-config-{{ Values.instanceName }}
+      configMap:
+        name: hive-site-config-{{ Values.instanceName }}
+    - name: kube-api-access
+      projected:
+        sources:
+          - serviceAccountToken:
+              expirationSeconds: 3607
+              path: token
+          - configMap:
+              name: kube-root-ca.crt
+              items:
+                - key: ca.crt
+                  path: ca.crt
+          - downwardAPI:
+              items:
+                - path: namespace
+                  fieldRef:
+                    fieldPath: metadata.namespace
+          - configMap:
+              name: openshift-service-ca.crt
+              items:
+                - key: service-ca.crt
+                  path: service-ca.crt
+        defaultMode: 420
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hive-metastore-postgres-{{ Values.instanceName }}
+  namespace: pgr24james
+  labels:
+    type: Metastore
+    app: hive-pod-{{ Values.instanceName }}  # matches the existing service selector
+spec:
+  {% if Values.metastore.nodeName %}
+  nodeName: "{{ Values.metastore.nodeName }}"
+  {% endif %}
+  containers:
+    - name: hive-metastore
+      image: {{ Values.metastore.hive.pod.image }}
+      env:
+        - name: METASTORE_LISTEN_HOST
+          value: "0.0.0.0"
+        - name: METASTORE_PORT
+          value: "9083"
+      ports:
+        - containerPort: 9083
+      command: ["/bin/bash", "-c"]
+      args:
+          - |
+            schematool -initSchema -dbType postgres && \
+            hive --service metastore
+            # chmod 777 /mnt/iceberg/tmp/hive
+      volumeMounts:
+        - name: pgr24jamesvol1claim
+          mountPath: /mnt/primary/
+        - name: lakehouse-raw-results
+          mountPath: {{ Values.results.raw.path }}
+        - name: hive-site-config-{{ Values.instanceName }}
+          mountPath: /opt/hive/conf
+        - name: {{ Values.pvc.iceberg.name }}
+          mountPath: {{ Values.pvc.iceberg.path }}
+      securityContext:
+        capabilities:
+          drop:
+            - MKNOD
+      imagePullPolicy: IfNotPresent
+
+    - name: postgres
+      image: {{ Values.metastore.postgres.pod.image }}
+      env:
+        - name: POSTGRES_DB
+          value: metastore
+        - name: POSTGRES_USER
+          value: hive
+        - name: POSTGRES_PASSWORD
+          value: hivepass
+      volumeMounts:
+        - name: {{ Values.pvc.iceberg.name }}
+          mountPath: /mnt/iceberg
+      securityContext:
+        capabilities:
+          drop:
+            - MKNOD
+  serviceAccountName: containerroot
+  volumes:
+    - name: pgr24jamesvol1claim
+      persistentVolumeClaim:
+        claimName: pgr24jamesvol1claim
+    - name: lakehouse-raw-results
+      persistentVolumeClaim:
+        claimName: {{ Values.results.raw.name }}
+    - name: {{ Values.pvc.iceberg.name }}
+      persistentVolumeClaim:
+        claimName: {{ Values.pvc.iceberg.name }}
+    - name: hive-site-config-{{ Values.instanceName }}
+      configMap:
+        name: hive-site-config-{{ Values.instanceName }}
+    - name: kube-api-access
+      projected:
+        sources:
+          - serviceAccountToken:
+              expirationSeconds: 3607
+              path: token
+          - configMap:
+              name: kube-root-ca.crt
+              items:
+                - key: ca.crt
+                  path: ca.crt
+          - downwardAPI:
+              items:
+                - path: namespace
+                  fieldRef:
+                    fieldPath: metadata.namespace
+          - configMap:
+              name: openshift-service-ca.crt
+              items:
+                - key: service-ca.crt
+                  path: service-ca.crt
+        defaultMode: 420

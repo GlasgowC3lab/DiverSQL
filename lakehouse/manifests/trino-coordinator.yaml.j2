@@ -1,0 +1,197 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: trino-coord-pod-{{ Values.instanceName }}
+  namespace: pgr24james
+  labels:
+    type: Coordinator
+    pod: trino-pod-{{ Values.instanceName }}
+    app: profile-pod-{{ Values.instanceName }}
+spec:
+  {% if Values.trino.coord.nodeName %}
+  nodeName: "{{ Values.trino.coord.nodeName }}"
+  {% endif %}
+  serviceAccountName: containerroot
+  imagePullSecrets:
+    - name: containerroot-dockercfg-qrptl
+  priority: 0
+  schedulerName: default-scheduler
+  enableServiceLinks: true
+  terminationGracePeriodSeconds: 30
+  preemptionPolicy: PreemptLowerPriority
+  securityContext:
+    seLinuxOptions:
+      level: 's0:c29,c14'
+    runAsUser: 0
+  containers:
+    - name: query-node-profiler
+      image: 2570809n/node-profiler:latest
+      imagePullPolicy: Always
+      command:
+        - /bin/sh
+        - -c
+        - |
+          sleep 10
+          python /mnt/primary/Main/profile_cluster/profile_server.py
+      env:
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: MY_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: PROFILE_SCRIPT
+          value: /mnt/primary/Main/profile_cluster/test_profile.py
+      ports:
+        - containerPort: 8123
+          protocol: TCP
+      volumeMounts:
+        - name: lakehouse-raw-results
+          mountPath: {{ Values.results.raw.path }}
+        - name: pgr24jamesvol1claim
+          mountPath: /mnt/primary
+      resources:
+        requests:
+          cpu: "1"
+          memory: "1Gi"
+        limits:
+          cpu: "1"
+          memory: "1Gi"
+      securityContext:
+        capabilities:
+          drop:
+            - MKNOD
+    - name: metric-scraper
+      image: "python:3.12-slim"
+      command:
+        - /bin/sh
+        - -c
+        - |
+          python -u /mnt/primary/Main/trino_stack/scrape.py
+      ports:
+        - containerPort: 8099
+      securityContext:
+        runAsUser: 0
+      volumeMounts:
+        - name: pgr24jamesvol1claim
+          mountPath: /mnt/primary
+        - name: lakehouse-raw-results
+          mountPath: {{ Values.results.raw.path }}
+        - name: {{ Values.pvc.iceberg.name }}
+          mountPath: {{ Values.pvc.iceberg.path }}
+              
+    - name: node-exporter
+      image: quay.io/prometheus/node-exporter:v1.8.1
+      args:
+        - --path.procfs=/proc
+        - --path.sysfs=/sys
+        - --path.rootfs=/host
+        - --collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)
+      ports:
+        - containerPort: 9100
+      securityContext:
+        runAsUser: 0
+    - name: trino-coord
+      ports:
+        - containerPort: 7071
+          protocol: TCP
+        - containerPort: 8080
+        - containerPort: 9100
+        - containerPort: 9189
+        - containerPort: 9090
+          protocol: TCP
+        - containerPort: 9102
+          protocol: TCP
+        - containerPort: 8099
+          protocol: TCP
+      image: {{ Values.trino.pod.image }}
+      env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+      command:
+        - /bin/sh
+        - -c
+        - |
+          exec /lib/trino/bin/run-trino &
+          /mnt/primary/Mini-project/Apache/System/Probe/trino_probe.sh "{{ Values.instanceName }}" "$POD_NAME"
+      volumeMounts:
+        - name: pgr24jamesvol1claim
+          mountPath: /mnt/primary
+        - name: lakehouse-raw-results
+          mountPath: {{ Values.results.raw.path }}
+        - name: {{ Values.pvc.iceberg.name }}
+          mountPath: {{ Values.pvc.iceberg.path }}
+        - name: trino-iceberg-config-{{ Values.instanceName }}
+          mountPath: /etc/trino/catalog/iceberg.properties
+          subPath: iceberg.properties
+        - name: trino-coord-config-{{ Values.instanceName }}
+          mountPath: /etc/trino/config.properties
+          subPath: config.properties
+        - name: trino-jvm-config
+          mountPath: /etc/trino/jvm.config
+          subPath: jvm.config
+        - name: trino-jmx-config
+          mountPath: /etc/jmx-exporter-config.yml
+          subPath: jmx-exporter-config.yml
+      securityContext:
+        capabilities:
+          drop:
+            - MKNOD
+      imagePullPolicy: IfNotPresent
+      resources:
+        requests:
+          cpu: {{ Values.trino.coord.resources.cpu }}
+          memory: {{ Values.trino.coord.resources.memory }}
+        limits:
+          cpu: {{ Values.trino.coord.resources.cpu }}
+          memory: {{ Values.trino.coord.resources.memory }}
+  serviceAccount: containerroot
+  volumes:
+    - name: pgr24jamesvol1claim
+      persistentVolumeClaim:
+        claimName: pgr24jamesvol1claim
+    - name: lakehouse-raw-results
+      persistentVolumeClaim:
+        claimName: {{ Values.results.raw.name }}
+    - name: {{ Values.pvc.iceberg.name }}
+      persistentVolumeClaim:
+        claimName: {{ Values.pvc.iceberg.name }}
+    - name: trino-iceberg-config-{{ Values.instanceName }}
+      configMap:
+        name: trino-iceberg-config-{{ Values.instanceName }}
+    - name: trino-coord-config-{{ Values.instanceName }}
+      configMap:
+        name: trino-coord-config-{{ Values.instanceName }}
+    - name: trino-jvm-config
+      configMap:
+        name: trino-jvm-config
+    - name: trino-jmx-config
+      configMap:
+        name: trino-jmx-config
+    - name: kube-api-access-kkwjn
+      projected:
+        sources:
+            - serviceAccountToken:
+                expirationSeconds: 360700
+                path: token
+            - configMap:
+                name: kube-root-ca.crt
+                items:
+                  - key: ca.crt
+                    path: ca.crt
+            - downwardAPI:
+                items:
+                  - path: namespace
+                    fieldRef:
+                      apiVersion: v1
+                      fieldPath: metadata.namespace
+            - configMap:
+                name: openshift-service-ca.crt
+                items:
+                  - key: service-ca.crt
+                    path: service-ca.crt
+        defaultMode: 420
