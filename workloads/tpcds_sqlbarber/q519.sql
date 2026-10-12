@@ -1,0 +1,1 @@
+SELECT ca.ca_state, SUM(ws.ws_net_paid) AS total_sales, SUM(wr.wr_return_amt) AS total_returns FROM web_sales ws JOIN customer_address ca ON ws.ws_bill_addr_sk = ca.ca_address_sk JOIN web_returns wr ON wr.wr_order_number = ws.ws_order_number WHERE ca.ca_country = 'United States' AND ws.ws_sold_date_sk BETWEEN 2451379 AND 2452190 GROUP BY ca.ca_state

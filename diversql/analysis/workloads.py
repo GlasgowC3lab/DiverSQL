@@ -11,41 +11,41 @@ WORKLOAD_METRICS_CSV = ANALYSIS_RESULTS_DIR / "workload_metrics.csv"   # written
 GIN_VENDI_CSV = ANALYSIS_RESULTS_DIR / "gin_vendi" / "plan_vendi_gin_cosine.csv"   # written by check_cosine_vendi.ipynb
 GIN_VENDI_COL = "GIN cosine, pooled vocab, std."
 
-REF = "tpcds_1000"
+REF = "tpcds_ref"
 BASELINES = [
-    "bootstrapping_lcm_1000_tokens_tpcds",
-    "e2etune_1000_tokens_tpcds",
-    "sql_factory_1000_tokens_tpcds",
-    "sqlbarber_1000_tokens_tpcds",
-    "sqlstorm_1000_tokens_tpcds",
+    "tpcds_bootstrapping_lcm",
+    "tpcds_e2etune",
+    "tpcds_sql_factory",
+    "tpcds_sqlbarber",
+    "tpcds_sqlstorm",
 ]
-OURS = ["gpt_generated_1000_tpcds_tokens_no_feedback", "gpt_generated_1000_tpcds_tokens"]
+OURS = ["tpcds_diversql_no_feedback", "tpcds_diversql"]
 ROWS = [REF] + BASELINES + OURS
 GENERATORS = BASELINES + OURS
 
 PRETTY = {
-    "tpcds_1000": "TPC-DS (1000)",
-    "bootstrapping_lcm_1000_tokens_tpcds": "Bootstrapping-LCM",
-    "e2etune_1000_tokens_tpcds": "E2ETune",
-    "sql_factory_1000_tokens_tpcds": "SQL-Factory",
-    "sqlbarber_1000_tokens_tpcds": "SQLBarber",
-    "sqlstorm_1000_tokens_tpcds": "SQLStorm",
-    "gpt_generated_1000_tpcds_tokens_no_feedback": "DiverSQL (W/O FB)",
-    "gpt_generated_1000_tpcds_tokens": "DiverSQL (W/ FB)",
+    "tpcds_ref": "TPC-DS (1000)",
+    "tpcds_bootstrapping_lcm": "Bootstrapping-LCM",
+    "tpcds_e2etune": "E2ETune",
+    "tpcds_sql_factory": "SQL-Factory",
+    "tpcds_sqlbarber": "SQLBarber",
+    "tpcds_sqlstorm": "SQLStorm",
+    "tpcds_diversql_no_feedback": "DiverSQL (W/O FB)",
+    "tpcds_diversql": "DiverSQL (W/ FB)",
 }
 
-PLAN_METRICS_KEY = {"tpcds_1000": "tpcds_1000"}
+PLAN_METRICS_KEY = {"tpcds_ref": "tpcds_ref"}
 
 # workload -> (collection, run_id) of its single execution run on lakehouse-h.
 RUNTIME_RUNS = {
-    "tpcds_1000": ("tpcds_1000", "20260816-120034Z"),
-    "bootstrapping_lcm_1000_tokens_tpcds": ("bootstrapping_lcm_1000_tokens_tpcds", "20260816-171633Z"),
-    "e2etune_1000_tokens_tpcds": ("e2etune_1000_tokens_tpcds", "20260817-044319Z"),
-    "sql_factory_1000_tokens_tpcds": ("sql_factory_1000_tokens_tpcds", "20260817-133213Z"),
-    "sqlbarber_1000_tokens_tpcds": ("sqlbarber_1000_tokens_tpcds", "20260818-033107Z"),
-    "sqlstorm_1000_tokens_tpcds": ("sqlstorm_1000_tokens_tpcds_new", "20260819-161625Z"),
-    "gpt_generated_1000_tpcds_tokens_no_feedback": ("gpt_generated_1000_tpcds_tokens_no_feedback", "20260921-111847Z"),
-    "gpt_generated_1000_tpcds_tokens": ("gpt_generated_1000_tpcds_tokens", "20260813-214605Z"),
+    "tpcds_ref": ("tpcds_ref", "20260816-120034Z"),
+    "tpcds_bootstrapping_lcm": ("tpcds_bootstrapping_lcm", "20260816-171633Z"),
+    "tpcds_e2etune": ("tpcds_e2etune", "20260817-044319Z"),
+    "tpcds_sql_factory": ("tpcds_sql_factory", "20260817-133213Z"),
+    "tpcds_sqlbarber": ("tpcds_sqlbarber", "20260818-033107Z"),
+    "tpcds_sqlstorm": ("tpcds_sqlstorm_new", "20260819-161625Z"),
+    "tpcds_diversql_no_feedback": ("tpcds_diversql_no_feedback", "20260921-111847Z"),
+    "tpcds_diversql": ("tpcds_diversql", "20260813-214605Z"),
 }
 SCHEMA, INSTANCE = "tpcds", "lakehouse-h"
 

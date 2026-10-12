@@ -1,0 +1,1 @@
+SELECT d.d_year AS year, c.cc_state AS state, COUNT(DISTINCT w.wp_web_page_sk) AS distinct_pages, SUM(c.cc_employees) AS total_employees FROM call_center c JOIN date_dim d ON c.cc_open_date_sk = d.d_date_sk JOIN web_page w ON w.wp_creation_date_sk = d.d_date_sk WHERE d.d_year = 1932 AND c.cc_state = 'FL' GROUP BY d.d_year, c.cc_state

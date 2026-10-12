@@ -1,0 +1,1 @@
+SELECT i_brand, i_category, SUM(wr_return_amt) AS total_return_amount FROM web_returns JOIN item ON web_returns.wr_item_sk = item.i_item_sk WHERE i_category = 'Women                                             ' GROUP BY i_brand, i_category ORDER BY total_return_amount DESC LIMIT 1000

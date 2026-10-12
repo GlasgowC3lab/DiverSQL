@@ -1,0 +1,1 @@
+SELECT ca.ca_state, p.p_promo_name, SUM(cs.cs_net_paid) AS total_net_paid, COUNT(DISTINCT cs.cs_order_number) AS distinct_orders FROM catalog_sales cs JOIN customer_address ca ON cs.cs_bill_addr_sk = ca.ca_address_sk JOIN promotion p ON cs.cs_promo_sk = p.p_promo_sk WHERE cs.cs_sold_date_sk >= 2450818 AND cs.cs_sold_date_sk <= 2450816 GROUP BY ca.ca_state, p.p_promo_name

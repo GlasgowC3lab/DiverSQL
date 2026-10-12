@@ -30,4 +30,4 @@ DSQGEN_BIN = TPCDS_KIT_DIR / "tools" / "dsqgen"
 TPCDS_TEMPLATES_DIR = TPCDS_KIT_DIR / "query_templates"
 
 # Motivation
-GROWTH_CURVE_WORKLOAD_DIR = WORKLOADS_DIR / "tpcds_growth_curve"
+GROWTH_CURVE_WORKLOAD_DIR = None # workload_generation/paper/diversql/shared/growth_curve_workload.py Excluded for size 

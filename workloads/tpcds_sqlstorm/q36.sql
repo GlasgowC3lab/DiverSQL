@@ -1,0 +1,8 @@
+SELECT c.c_customer_id, sum(ss.ss_net_paid) AS total_spent
+FROM store_sales ss
+JOIN customer c ON ss.ss_customer_sk = c.c_customer_sk
+JOIN date_dim d ON ss.ss_sold_date_sk = d.d_date_sk
+WHERE d.d_year = 2001
+GROUP BY c.c_customer_id
+ORDER BY total_spent DESC
+LIMIT 5

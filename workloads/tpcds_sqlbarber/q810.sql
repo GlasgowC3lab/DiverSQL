@@ -1,0 +1,1 @@
+SELECT i.i_category, i.i_brand, SUM(cr.cr_return_amount) AS total_return_amount, COUNT(*) AS return_count FROM catalog_returns cr JOIN item i ON cr.cr_item_sk = i.i_item_sk JOIN inventory inv ON inv.inv_item_sk = i.i_item_sk WHERE cr.cr_returned_date_sk = 2451004 AND inv.inv_quantity_on_hand > 859 GROUP BY i.i_category, i.i_brand

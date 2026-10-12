@@ -1,0 +1,1 @@
+SELECT w.w_warehouse_name, SUM(ws.ws_net_paid) AS total_net_paid FROM web_sales ws JOIN warehouse w ON ws.ws_warehouse_sk = w.w_warehouse_sk WHERE ws.ws_sold_date_sk = 2452342 GROUP BY w.w_warehouse_name

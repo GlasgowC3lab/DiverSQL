@@ -1,0 +1,1 @@
+SELECT d.d_year, p.p_promo_name, SUM(cs.cs_ext_sales_price) AS total_sales, AVG(cs.cs_net_profit) AS avg_profit FROM catalog_sales cs JOIN date_dim d ON cs.cs_sold_date_sk = d.d_date_sk JOIN promotion p ON cs.cs_promo_sk = p.p_promo_sk WHERE d.d_year = 1916 AND p.p_discount_active = 'N' GROUP BY d.d_year, p.p_promo_name ORDER BY total_sales DESC LIMIT 1000

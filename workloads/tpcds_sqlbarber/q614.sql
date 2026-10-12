@@ -1,0 +1,1 @@
+SELECT hd.hd_buy_potential, SUM(ws.ws_ext_sales_price) AS total_sales FROM web_sales ws JOIN household_demographics hd ON ws.ws_bill_hdemo_sk = hd.hd_demo_sk WHERE ws.ws_sold_date_sk = 2451973 GROUP BY hd.hd_buy_potential

@@ -1,0 +1,1 @@
+SELECT sm.sm_ship_mode_id, SUM(cs.cs_net_paid) AS total_net_paid FROM catalog_sales cs JOIN ship_mode sm ON cs.cs_ship_mode_sk = sm.sm_ship_mode_sk WHERE cs.cs_sold_date_sk = 2450817 GROUP BY sm.sm_ship_mode_id

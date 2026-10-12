@@ -1,0 +1,1 @@
+SELECT d.d_year, cc.cc_class, COUNT(*) AS call_center_cnt, SUM(cc.cc_employees) AS total_employees FROM call_center cc JOIN date_dim d ON cc.cc_closed_date_sk = d.d_date_sk JOIN web_page wp ON wp.wp_creation_date_sk = d.d_date_sk WHERE d.d_year = 1909 AND cc.cc_class = 'medium' GROUP BY d.d_year, cc.cc_class

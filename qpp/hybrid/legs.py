@@ -10,6 +10,7 @@ if str(ROOT) not in sys.path:
 from config import WORKLOADS_DIR  # noqa: E402
 from qpp.config import (  # noqa: E402
     PARSED_RESULTS_ROOT, METRIC, XCOL, YCOL, SEED, SCHEMA_NAME, LAKEHOUSE_INSTANCE_NAME, WORKLOAD_RUNS,
+    REFERENCE_WORKLOAD,
 )
 from qpp.qpp_harness import load_multi_source_qpp_data, QPPDataBundle, default_queries_dir_for  # noqa: E402
 
@@ -27,7 +28,7 @@ def _queries_dir_for(run_id: str) -> str:
 
 
 def _tpcds_fixed_test_qids() -> List[str]:
-    report = json.loads((WORKLOADS_DIR / WORKLOAD_RUNS[REAL_LEG]["collection"] / "generation_report.json").read_text())
+    report = json.loads((WORKLOADS_DIR / REFERENCE_WORKLOAD / "generation_report.json").read_text())
     return [Path(f).stem for f in report["train_test_split"]["test_query_files"]]
 
 

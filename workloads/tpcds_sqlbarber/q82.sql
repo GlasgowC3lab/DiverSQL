@@ -1,0 +1,1 @@
+SELECT i.i_category, i.i_brand, cs.cs_sold_date_sk, SUM(cs.cs_net_paid) AS total_net_paid, COUNT(*) AS sales_count FROM catalog_sales cs JOIN item i ON cs.cs_item_sk = i.i_item_sk JOIN promotion p ON cs.cs_promo_sk = p.p_promo_sk WHERE cs.cs_sold_date_sk BETWEEN 2450851 AND 2450831 GROUP BY i.i_category, i.i_brand, cs.cs_sold_date_sk

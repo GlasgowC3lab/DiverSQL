@@ -1,0 +1,8 @@
+SELECT r.r_reason_desc,
+       SUM(sr.sr_net_loss) AS total_store_net_loss,
+       SUM(wr.wr_net_loss) AS total_web_net_loss
+FROM reason r
+JOIN store_returns sr ON sr.sr_reason_sk = r.r_reason_sk
+JOIN web_returns wr ON wr.wr_reason_sk = r.r_reason_sk
+WHERE r.r_reason_id = 'AAAAAAAAMBAAAAAA' AND sr.sr_returned_date_sk = 2451231
+GROUP BY r.r_reason_desc

@@ -1,0 +1,1 @@
+SELECT ca.ca_state, SUM(s.ss_net_paid) AS total_net_paid FROM store_sales s JOIN customer_address ca ON s.ss_addr_sk = ca.ca_address_sk WHERE s.ss_sold_date_sk BETWEEN CAST('2451110' AS INTEGER) AND CAST('2452087' AS INTEGER) GROUP BY ca.ca_state

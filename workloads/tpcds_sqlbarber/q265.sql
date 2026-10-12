@@ -1,0 +1,1 @@
+SELECT d.d_year, p.p_promo_name, SUM(i.inv_quantity_on_hand) AS total_quantity, AVG(p.p_cost) AS avg_promo_cost FROM inventory i JOIN date_dim d ON i.inv_date_sk = d.d_date_sk JOIN promotion p ON p.p_start_date_sk = d.d_date_sk WHERE d.d_year = 1919 AND p.p_channel_email = 'N' GROUP BY d.d_year, p.p_promo_name

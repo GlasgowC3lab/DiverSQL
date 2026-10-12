@@ -1,0 +1,1 @@
+SELECT ws.ws_sold_date_sk AS sold_date, SUM(ws.ws_net_paid) AS total_net_paid FROM web_sales ws JOIN web_returns wr ON ws.ws_order_number = wr.wr_order_number WHERE ws.ws_sold_date_sk = 2451150 GROUP BY ws.ws_sold_date_sk

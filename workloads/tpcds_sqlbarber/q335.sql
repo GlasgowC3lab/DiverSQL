@@ -1,0 +1,1 @@
+SELECT wp_type, SUM(wr_return_amt) AS total_return_amt FROM web_page JOIN web_returns ON web_page.wp_web_page_sk = web_returns.wr_web_page_sk WHERE wp_rec_start_date >= DATE '1999-09-04' AND wp_rec_end_date <= DATE '2000-09-02' GROUP BY wp_type

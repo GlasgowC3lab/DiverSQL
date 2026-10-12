@@ -1,0 +1,1 @@
+SELECT date_dim.d_year, date_dim.d_month_seq, COUNT(*) AS closed_store_count FROM store JOIN date_dim ON store.s_closed_date_sk = date_dim.d_date_sk WHERE date_dim.d_year = 1918 AND store.s_state = 'AL' GROUP BY date_dim.d_year, date_dim.d_month_seq

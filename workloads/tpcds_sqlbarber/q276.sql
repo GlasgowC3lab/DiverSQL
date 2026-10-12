@@ -1,0 +1,1 @@
+SELECT hd.hd_income_band_sk, SUM(cr.cr_return_amount) AS total_return_amount FROM catalog_returns cr JOIN household_demographics hd ON cr.cr_refunded_hdemo_sk = hd.hd_demo_sk WHERE cr.cr_returned_date_sk = 2450969 AND hd.hd_income_band_sk = 2 GROUP BY hd.hd_income_band_sk ORDER BY total_return_amount DESC

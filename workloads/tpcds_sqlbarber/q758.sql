@@ -1,0 +1,1 @@
+SELECT sm.sm_type, SUM(cr.cr_return_amount) AS total_return_amount, AVG(ws.ws_net_paid) AS avg_net_paid FROM catalog_returns cr JOIN ship_mode sm ON cr.cr_ship_mode_sk = sm.sm_ship_mode_sk JOIN web_sales ws ON ws.ws_ship_mode_sk = sm.sm_ship_mode_sk WHERE sm.sm_type = 'NEXT DAY                      ' GROUP BY sm.sm_type

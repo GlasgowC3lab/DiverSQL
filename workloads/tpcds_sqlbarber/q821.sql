@@ -1,0 +1,1 @@
+SELECT ib.ib_income_band_sk, COUNT(*) AS household_count FROM household_demographics hd JOIN income_band ib ON hd.hd_income_band_sk = ib.ib_income_band_sk WHERE hd.hd_dep_count > 3 GROUP BY ib.ib_income_band_sk

@@ -11,6 +11,9 @@ YCOL = "value"
 SEED = 42
 TEST_FRAC = 0.2
 
+# Workload folder (under WORKLOADS_DIR) whose generation_report.json defines the TPC-DS held-out templates
+REFERENCE_WORKLOAD = "tpcds_ref"
+
 # Executed workload runs, parsed under PARSED_RESULTS_ROOT/<collection>/<SCHEMA_NAME>/<LAKEHOUSE_INSTANCE_NAME>/<run_id>
 SCHEMA_NAME = "tpcds"
 LAKEHOUSE_INSTANCE_NAME = "lakehouse-h"

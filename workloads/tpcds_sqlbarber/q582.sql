@@ -1,0 +1,1 @@
+SELECT store.s_store_name, SUM(store_returns.sr_return_amt) AS total_return_amount FROM store JOIN store_returns ON store.s_store_sk = store_returns.sr_store_sk WHERE store.s_state = 'TX' GROUP BY store.s_store_name

@@ -1,0 +1,1 @@
+SELECT ca_state, SUM(ss_net_paid) AS total_net_paid FROM store_sales JOIN customer_address ON store_sales.ss_addr_sk = customer_address.ca_address_sk WHERE ca_state = 'WA' AND ss_sold_date_sk BETWEEN 2451342 AND 2452217 GROUP BY ca_state

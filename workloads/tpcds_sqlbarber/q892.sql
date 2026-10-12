@@ -1,0 +1,1 @@
+SELECT ca_state, SUM(cr_return_amount) AS total_return_amount FROM catalog_returns cr JOIN customer_address ca ON cr.cr_refunded_addr_sk = ca.ca_address_sk WHERE cr.cr_returned_date_sk = 2451082 GROUP BY ca_state

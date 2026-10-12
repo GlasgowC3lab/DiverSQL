@@ -1,0 +1,1 @@
+SELECT ib.ib_income_band_sk, ib.ib_lower_bound, ib.ib_upper_bound, COUNT(*) AS household_count FROM household_demographics hd JOIN income_band ib ON hd.hd_income_band_sk = ib.ib_income_band_sk GROUP BY ib.ib_income_band_sk, ib.ib_lower_bound, ib.ib_upper_bound

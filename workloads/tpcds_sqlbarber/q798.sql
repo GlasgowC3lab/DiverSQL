@@ -1,0 +1,1 @@
+SELECT t.t_hour, cs.cs_item_sk, SUM(cs.cs_ext_sales_price) AS total_sales, AVG(sr.sr_return_amt) AS avg_return_amount FROM catalog_sales cs JOIN time_dim t ON cs.cs_sold_time_sk = t.t_time_sk JOIN store_returns sr ON sr.sr_return_time_sk = t.t_time_sk WHERE cs.cs_sold_date_sk = 2450821 AND sr.sr_returned_date_sk = 2451280 AND t.t_hour = 8 GROUP BY t.t_hour, cs.cs_item_sk

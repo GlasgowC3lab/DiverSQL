@@ -1,0 +1,1 @@
+SELECT sm.sm_ship_mode_id, SUM(cr.cr_return_amount) AS total_return_amount FROM catalog_returns cr JOIN ship_mode sm ON cr.cr_ship_mode_sk = sm.sm_ship_mode_sk WHERE cr.cr_returned_date_sk = 2451136 GROUP BY sm.sm_ship_mode_id

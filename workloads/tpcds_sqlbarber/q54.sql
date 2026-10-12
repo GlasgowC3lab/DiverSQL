@@ -1,0 +1,1 @@
+SELECT c.c_birth_year, hd.hd_buy_potential, SUM(ss.ss_net_paid) AS total_net_paid, AVG(ss.ss_ext_discount_amt) AS avg_discount FROM store_sales ss JOIN customer c ON ss.ss_customer_sk = c.c_customer_sk JOIN household_demographics hd ON ss.ss_hdemo_sk = hd.hd_demo_sk WHERE c.c_birth_year = 1942 AND hd.hd_income_band_sk = 20 GROUP BY c.c_birth_year, hd.hd_buy_potential

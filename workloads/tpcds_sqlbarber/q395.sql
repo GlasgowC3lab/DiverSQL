@@ -1,0 +1,1 @@
+SELECT time_dim.t_hour, SUM(store_returns.sr_return_amt) AS total_return_amt FROM store_returns JOIN time_dim ON store_returns.sr_return_time_sk = time_dim.t_time_sk WHERE time_dim.t_hour = 14 GROUP BY time_dim.t_hour

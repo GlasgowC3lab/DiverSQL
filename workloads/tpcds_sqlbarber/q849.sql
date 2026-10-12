@@ -1,0 +1,1 @@
+SELECT d.d_year AS year, s.web_name AS site_name, SUM(ws.ws_net_paid) AS total_net_paid, AVG(ws.ws_ext_discount_amt) AS avg_discount_amount FROM web_sales ws JOIN date_dim d ON ws.ws_sold_date_sk = d.d_date_sk JOIN web_site s ON ws.ws_web_site_sk = s.web_site_sk WHERE d.d_year = 1914 AND s.web_country = 'United States' GROUP BY d.d_year, s.web_name

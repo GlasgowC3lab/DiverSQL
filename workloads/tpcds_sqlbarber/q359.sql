@@ -1,0 +1,1 @@
+SELECT cs.cs_sold_date_sk, i.i_category, SUM(cs.cs_net_paid) AS total_net_paid FROM catalog_sales cs INNER JOIN item i ON cs.cs_item_sk = i.i_item_sk WHERE cs.cs_sold_date_sk BETWEEN 2450842 AND 2450837 GROUP BY cs.cs_sold_date_sk, i.i_category

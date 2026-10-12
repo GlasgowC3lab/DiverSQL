@@ -1,0 +1,1 @@
+SELECT c.c_customer_id, SUM(wr.wr_return_amt) AS total_return_amount FROM web_returns wr JOIN customer c ON wr.wr_refunded_customer_sk = c.c_customer_sk WHERE c.c_birth_year = 1000 GROUP BY c.c_customer_id

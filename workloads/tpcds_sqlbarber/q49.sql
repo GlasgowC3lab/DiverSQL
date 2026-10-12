@@ -1,0 +1,1 @@
+SELECT r.r_reason_desc, SUM(wr.wr_return_amt) AS total_return_amount FROM web_returns wr JOIN reason r ON wr.wr_reason_sk = r.r_reason_sk WHERE wr.wr_returned_date_sk = 2451898 GROUP BY r.r_reason_desc ORDER BY total_return_amount DESC

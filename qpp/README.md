@@ -22,4 +22,4 @@ Each experiment keeps its results next to its notebooks: `cold/results/cold_star
 
 ## Running
 
-Run the notebooks from inside `cold/` or `hybrid/`; each finds the repo root and imports from `qpp`. The `01_*` notebooks need the parsed runs listed in `config.WORKLOAD_RUNS` under `results/parsed_results/`. They also need `workloads/tpcds_1200/`, whose `generation_report.json` defines the TPC-DS held-out templates; `hybrid/02_*` needs it too, as it imports `legs.py` through `sweep.py`. The `02_*` notebooks only read saved results, so the paper's tables and figures can be rebuilt without retraining.
+Run the notebooks from inside `cold/` or `hybrid/`; each finds the repo root and imports from `qpp`. The `01_*` notebooks need the parsed runs listed in `config.WORKLOAD_RUNS` under `results/parsed_results/`. 

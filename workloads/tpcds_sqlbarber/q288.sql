@@ -1,0 +1,1 @@
+SELECT promotion.p_promo_name, SUM(web_sales.ws_net_paid) AS total_net_paid FROM promotion JOIN web_sales ON web_sales.ws_promo_sk = promotion.p_promo_sk WHERE promotion.p_discount_active = 'N' GROUP BY promotion.p_promo_name

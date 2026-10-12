@@ -1,0 +1,1 @@
+SELECT ib.ib_lower_bound, COUNT(*) AS household_count FROM household_demographics hd INNER JOIN income_band ib ON hd.hd_income_band_sk = ib.ib_income_band_sk WHERE hd.hd_vehicle_count > -1 GROUP BY ib.ib_lower_bound
