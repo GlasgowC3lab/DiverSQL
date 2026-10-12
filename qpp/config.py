@@ -18,11 +18,11 @@ REFERENCE_WORKLOAD = "tpcds_ref"
 SCHEMA_NAME = "tpcds"
 LAKEHOUSE_INSTANCE_NAME = "lakehouse-h"
 WORKLOAD_RUNS = {
-    "tpcds":             dict(collection="tpcds_1200", run_ids=["20260816-120034Z"]),
-    "gpt_generated":     dict(collection="gpt_generated_1000_tpcds_tokens", run_ids=["20260813-214605Z"]),
-    "sqlbarber":         dict(collection="sqlbarber_1000_tokens_tpcds", run_ids=["20260818-033107Z"]),
-    "bootstrapping_lcm": dict(collection="bootstrapping_lcm_1000_tokens_tpcds", run_ids=["20260816-171633Z"]),
-    "sql_factory":       dict(collection="sql_factory_1000_tokens_tpcds", run_ids=["20260817-133213Z"]),
-    "e2etune":           dict(collection="e2etune_1000_tokens_tpcds", run_ids=["20260817-044319Z"]),
-    "sqlstorm":          dict(collection="sqlstorm_1000_tokens_tpcds_new", run_ids=["20260819-161625Z"]),
+    "tpcds":             dict(collection="tpcds_ref", run_ids=["20260816-120034Z"]),
+    "gpt_generated":     dict(collection="tpcds_diversql", run_ids=["20260813-214605Z"]),
+    "sqlbarber":         dict(collection="tpcds_sqlbarber", run_ids=["20260818-033107Z"]),
+    "bootstrapping_lcm": dict(collection="tpcds_bootstrapping_lcm", run_ids=["20260816-171633Z"]),
+    "sql_factory":       dict(collection="tpcds_sql_factory", run_ids=["20260817-133213Z"]),
+    "e2etune":           dict(collection="tpcds_e2etune", run_ids=["20260817-044319Z"]),
+    "sqlstorm":          dict(collection="tpcds_sqlstorm_new", run_ids=["20260819-161625Z"]),
 }
