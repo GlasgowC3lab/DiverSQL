@@ -1,0 +1,25 @@
+"""QPP experiment settings; the parsed-results path comes from the repo-root config."""
+from config import PARSED_RESULTS_DIR
+
+PARSED_RESULTS_ROOT = str(PARSED_RESULTS_DIR)
+
+# Workload metric
+METRIC = "cpu_cores"
+XCOL = "t_rel_s"
+YCOL = "value"
+
+SEED = 42
+TEST_FRAC = 0.2
+
+# Executed workload runs, parsed under PARSED_RESULTS_ROOT/<collection>/<SCHEMA_NAME>/<LAKEHOUSE_INSTANCE_NAME>/<run_id>
+SCHEMA_NAME = "tpcds"
+LAKEHOUSE_INSTANCE_NAME = "lakehouse-h"
+WORKLOAD_RUNS = {
+    "tpcds":             dict(collection="tpcds_1200", run_ids=["20260816-120034Z"]),
+    "gpt_generated":     dict(collection="gpt_generated_1000_tpcds_tokens", run_ids=["20260813-214605Z"]),
+    "sqlbarber":         dict(collection="sqlbarber_1000_tokens_tpcds", run_ids=["20260818-033107Z"]),
+    "bootstrapping_lcm": dict(collection="bootstrapping_lcm_1000_tokens_tpcds", run_ids=["20260816-171633Z"]),
+    "sql_factory":       dict(collection="sql_factory_1000_tokens_tpcds", run_ids=["20260817-133213Z"]),
+    "e2etune":           dict(collection="e2etune_1000_tokens_tpcds", run_ids=["20260817-044319Z"]),
+    "sqlstorm":          dict(collection="sqlstorm_1000_tokens_tpcds_new", run_ids=["20260819-161625Z"]),
+}

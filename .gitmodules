@@ -1,0 +1,3 @@
+[submodule "third_party/iceberg-spark-tpcds-benchmark"]
+	path = third_party/iceberg-spark-tpcds-benchmark
+	url = https://github.com/MOBIN-F/iceberg-spark-tpcds-benchmark

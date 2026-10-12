@@ -21,10 +21,11 @@ RESULTS_DIR = ROOT / "results"
 FIGURES_DIR = RESULTS_DIR / "figures"
 TABLES_DIR = RESULTS_DIR / "tables" # LaTeX + CSV for the paper tables
 PARSED_RESULTS_DIR = RESULTS_DIR / "parsed_results" # <collection>/<schema>/<instance>/<run_id>/queries/runtimes.csv
-SCHEMA_DIR = ROOT / "datasets" / "schemas" # <schema>.json dataset definitions
+SCHEMA_DIR = ROOT / "datasets" # <schema>.json dataset definitions
 
-# TPC-DS kit (dsqgen + query templates)
-TPCDS_KIT_DIR = ROOT / "third_party" / "tpcds-kit"
+# TPC-DS kit (dsqgen + query templates), bundled with the iceberg-spark-tpcds-benchmark submodule
+TPCDS_BENCHMARK_DIR = ROOT / "third_party" / "iceberg-spark-tpcds-benchmark"
+TPCDS_KIT_DIR = TPCDS_BENCHMARK_DIR / "thirdparty" / "tpcds-kit"
 DSQGEN_BIN = TPCDS_KIT_DIR / "tools" / "dsqgen"
 TPCDS_TEMPLATES_DIR = TPCDS_KIT_DIR / "query_templates"
 
