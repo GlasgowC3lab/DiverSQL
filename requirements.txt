@@ -1,0 +1,36 @@
+# Python 3.10. "==" pins are the versions in the development environment;
+# ">=" entries need a recent release.
+
+# Core: analysis, QPP models and figures
+numpy==1.26.4
+pandas==2.3.3
+scipy==1.15.3
+scikit-learn==1.7.2
+matplotlib==3.10.6
+networkx==3.2.1
+joblib==1.5.2
+tqdm==4.67.1
+torch==2.8.0
+xgboost>=2.0
+lightgbm>=4.0
+
+# Static SQL features (required for Table 1)
+sqlglot>=25.0
+
+# Generation: DiverSQL and the baselines (OpenAI-compatible LLM endpoint)
+openai==2.1.0
+requests==2.32.5
+transformers==4.57.0  # SQL-Factory embedding similarity
+
+# Lakehouse deployment and execution
+trino>=0.330
+kubernetes>=29.0
+Jinja2==3.1.6
+PyYAML==6.0.2
+
+# Plan graph rendering (utils/parser.py)
+pydot>=2.0
+
+# Notebooks
+jupyter==1.1.1
+ipykernel==6.30.1
